@@ -1,7 +1,16 @@
 from __future__ import annotations
 from dataclasses import dataclass
-from decimal import Decimal
 from typing import Optional
+from .utilities import mod_args, Decimal
+
+mod_str_to_bytearray = mod_args(test_func=lambda arg: isinstance(arg, str), mod_func=lambda arg: bytearray(arg.encode()))
+
+
+def mutate_barray_for_preamble(line, *, test_func):
+    """Gets rid of the CANDE preamble line that is optional in input files"""
+    assert isinstance(line, bytearray)
+    if test_func(line):
+        del line[:27]
 
 
 class CandePartError(Exception):
@@ -16,6 +25,20 @@ class CandeFormatError(CandePartError):
 class CandePart:
     num: int = 0
 
+    @staticmethod
+    @mod_str_to_bytearray
+    def remove_preamble(line):
+        # break off preamble line if it is there
+        mutate_barray_for_preamble(line, test_func=lambda x: not x[1:5].decode().strip().isdigit())
+
+    @classmethod
+    @mod_str_to_bytearray
+    def from_cid(cls, line):
+        cls.remove_preamble(line)
+        num = int(line[1:5])
+        del line[:5]
+        return cls(num)
+
     def __format__(self, format_spec):
         if format_spec == 'cid':
             return f'{self.num: >5d}'
@@ -29,6 +52,14 @@ class Node(CandePart):
     x: Decimal = Decimal()
     y: Decimal = Decimal()
     master: Optional[Node] = None
+
+    @classmethod
+    @mod_str_to_bytearray
+    def from_cid(cls, line):
+        obj = super().from_cid(line)
+        obj.x, obj.y = Decimal(line[5:15]), Decimal(line[15:25])
+        del line[:25]
+        return obj
 
     def __format__(self, format_spec):
         results_strs = [super().__format__(format_spec)]
@@ -47,6 +78,18 @@ class Element(CandePart):
     type: int = 0
     death: int = 0
 
+    @classmethod
+    @mod_str_to_bytearray
+    def from_cid(cls, line):
+        obj = super().from_cid(line)
+        obj.i, obj.j, obj.k, obj.l, obj.mat, obj.step = int(line[1:5]), int(line[5:10]), int(line[10:15]), int(line[15:20]), int(line[20:25]), int(line[25:30])
+        if line[30:35].strip():
+            obj.type = int(line[30:35])
+        if line[50:55].strip():
+            obj.type = int(line[50:55])
+        del line[:55]
+        return obj
+
     def __format__(self, format_spec):
         result_strs = [super().__format__(format_spec)]
         result_strs.append(f'{self.i: >5d}{self.j: >5d}{self.k: >5d}{self.l: >5d}{self.mat: >5d}{self.step: >5d}')
@@ -64,6 +107,15 @@ class Boundary(CandePart):
     yvalue: Decimal = Decimal()
     angle: Decimal = Decimal()
     step: int = 0
+
+    @classmethod
+    @mod_str_to_bytearray
+    def from_cid(cls, line, num=0):
+        cls.remove_preamble(line)
+        obj = cls(num)
+        obj.node, obj.xcode, obj.xvalue, obj.ycode, obj.yvalue, obj.angle, obj.step = int(line[1:5]), int(line[5:10]), Decimal(line[10:20]), int(line[20:25]), Decimal(line[25:35]), Decimal(line[35:45]), int(line[45:50])
+        del line[:50]
+        return obj
 
     def __format__(self, format_spec):
         result_strs = [super().__format__(format_spec)[0]]

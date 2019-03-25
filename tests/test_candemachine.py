@@ -4,6 +4,10 @@ import candemachine
 
 class TestNode:
     @pytest.fixture
+    def cidL(self):
+        return "L   1       1.0       1.0"
+
+    @pytest.fixture
     def info(self):
         return dict(num=1, x=1.0, y=1.0)
 
@@ -19,8 +23,15 @@ class TestNode:
         assert format(node, 'cid') == ' ' + result
         assert format(node, 'cidL') == 'L' + result
 
+    def test_from_cid(self, cidL):
+        assert candemachine.Node.from_cid(cidL)
+
 
 class TestElement:
+    @pytest.fixture
+    def cidL(self):
+        return "L   1    1    2    3    4    1    1    8    3"
+
     @pytest.fixture
     def info(self):
         return dict(num=1, i=1, j=2, k=3, l=4, mat=1, step=1, type=8, death=3)
@@ -40,8 +51,15 @@ class TestElement:
         assert format(element, 'cid') == ' ' + result
         assert format(element, 'cidL') == 'L' + result
 
+    def test_from_cid(self, cidL):
+        assert candemachine.Element.from_cid(cidL)
+
 
 class TestBoundary:
+    @pytest.fixture
+    def cidL(self):
+        return "L  25    1        10    1        10         0    1"
+
     @pytest.fixture
     def info(self):
         return dict(num=1, node=25, xcode=1, xvalue=10, ycode=1, yvalue=10, angle=0, step=1)
@@ -59,3 +77,6 @@ class TestBoundary:
             f'{info["angle"]: >10G}{info["step"]: >5d}'
         assert format(boundary, 'cid') == ' ' + result
         assert format(boundary, 'cidL') == 'L' + result
+
+    def test_from_cid(self, cidL):
+        assert candemachine.Boundary.from_cid(cidL)
