@@ -1,3 +1,4 @@
+import enum
 from functools import  wraps
 import decimal
 
@@ -12,6 +13,13 @@ def mod_args(test_func, mod_func):
             return func(*args, **kwargs)
         return wrapped
     return wrapper
+
+
+class ValuesGenMixin:
+    """Extends enums with a generator of all the values"""
+    @classmethod
+    def values_gen(cls):
+        return (v.value for v in list(cls))
 
 
 class Decimal(decimal.Decimal):
@@ -30,3 +38,13 @@ class Decimal(decimal.Decimal):
             if isinstance(value, bytearray):
                 return cls.from_bytearray(value, context)
             raise e
+
+
+def mutate_barray_for_preamble(line, *, test_func):
+    """Gets rid of the CANDE preamble line that is optional in input files"""
+    assert isinstance(line, bytearray)
+    if test_func(line):
+        del line[:27]
+
+
+mod_str_to_bytearray = mod_args(test_func=lambda arg: isinstance(arg, str), mod_func=lambda arg: bytearray(arg.encode()))

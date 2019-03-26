@@ -1,5 +1,19 @@
 import pytest
 import candemachine
+from candemachine.candemain import CandeBase, Mode
+
+
+class TestCandeBase:
+    @pytest.fixture
+    def BasicCande(self):
+        class BasicCande(CandeBase):
+            @property
+            def level_contents(self):
+                return []
+        return BasicCande
+
+    def test_attrs(self, BasicCande):
+        assert BasicCande(0, Mode.ANALYSIS, level=3)
 
 
 class TestNode:

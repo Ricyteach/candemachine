@@ -1,24 +1,10 @@
 from __future__ import annotations
 from dataclasses import dataclass
 from typing import Optional
-from .utilities import mod_args, Decimal
 
-mod_str_to_bytearray = mod_args(test_func=lambda arg: isinstance(arg, str), mod_func=lambda arg: bytearray(arg.encode()))
-
-
-def mutate_barray_for_preamble(line, *, test_func):
-    """Gets rid of the CANDE preamble line that is optional in input files"""
-    assert isinstance(line, bytearray)
-    if test_func(line):
-        del line[:27]
-
-
-class CandePartError(Exception):
-    pass
-
-
-class CandeFormatError(CandePartError):
-    pass
+from candemachine.utilities import mod_str_to_bytearray
+from ..exceptions import CandeFormatError
+from ..utilities import Decimal, mutate_barray_for_preamble
 
 
 @dataclass
@@ -118,7 +104,7 @@ class Boundary(CandePart):
         return obj
 
     def __format__(self, format_spec):
-        result_strs = [super().__format__(format_spec)[0]]
+        result_strs = [super().__format__(format_spec)[:1]]
         result_strs.append(f'{self.node: >4d}{self.xcode: >5d}{self.xvalue: >10G}{self.ycode: >5d}{self.yvalue: >10G}'
                            f'{self.angle: >10G}{self.step: >5d}')
         return ''.join(result_strs)
