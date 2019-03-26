@@ -15,6 +15,7 @@ def mod_args(test_func, mod_func):
 
 
 class Decimal(decimal.Decimal):
+
     @classmethod
     def from_bytearray(cls, barray, context=None):
         if context:
@@ -22,10 +23,10 @@ class Decimal(decimal.Decimal):
         return cls(barray.decode())
 
     @wraps(decimal.Decimal.__new__)
-    def __new__(cls, *args, **kwargs):
+    def __new__(cls, value="0", context=None):
         try:
-            return super().__new__(cls, *args, **kwargs)
+            return super().__new__(cls, value, context)
         except TypeError as e:
-            if isinstance(args[0], bytearray):
-                return cls.from_bytearray(*args, **kwargs)
+            if isinstance(value, bytearray):
+                return cls.from_bytearray(value, context)
             raise e
