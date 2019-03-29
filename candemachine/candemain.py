@@ -71,7 +71,7 @@ class CandeBase(abc.ABC):
     def from_cid(cls, line):
         cls.remove_preamble(line)
         obj = cls(
-            mode = Mode(line[:8].decode()),
+            mode = Mode(line[:8].decode().strip()),
             level = Level(int(line[8:10])),
             method = Method(int(line[10:12])),
             heading = line[15:75].decode(),

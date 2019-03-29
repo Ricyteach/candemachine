@@ -1,6 +1,7 @@
 import pytest
 import candemachine
 from candemachine.candemain import CandeBase, Mode
+from candemachine.exceptions import CandeSerializationError
 
 
 class TestCandeBase:
@@ -16,12 +17,31 @@ class TestCandeBase:
     def asd_anal_l3_cande(self, BasicCande):
         return BasicCande(0, Mode.ANALYSIS, level=3)
 
+    @pytest.fixture
+    def cid(self):
+        return "ANALYS   3 0  0From `candemachine` by: Rick Teachey, rick@teachey.org        -99"
+
     def test_init(self, asd_anal_l3_cande):
         assert asd_anal_l3_cande
 
     def test_iter(self, asd_anal_l3_cande):
-        assert list(iter(asd_anal_l3_cande)) == [asd_anal_l3_cande]
+        asd_anal_l3_cande.materials = [1]
+        assert list(iter(asd_anal_l3_cande)) == [asd_anal_l3_cande, 1]
 
+    def test_cid_format(self, asd_anal_l3_cande, cid):
+        assert f"{asd_anal_l3_cande:cid}" == cid
+
+    def test_from_cid(self, BasicCande, cid):
+        assert BasicCande.from_cid(cid)
+
+    def test_serialize(self, asd_anal_l3_cande):
+        with pytest.raises(CandeSerializationError):
+            next(asd_anal_l3_cande.serialize(output="foo"))
+        next(asd_anal_l3_cande.serialize(output="cid"))
+        next(asd_anal_l3_cande.serialize(output="cid"))  # already tested in cid_format
+        next(asd_anal_l3_cande.serialize(output="cid"))  # already tested in cid_format
+        next(asd_anal_l3_cande.serialize(output="cid"))  # already tested in cid_format
+        assert next(asd_anal_l3_cande.serialize(output="cid")) == ""
 
 class TestNode:
     @pytest.fixture
