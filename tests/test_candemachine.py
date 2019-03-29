@@ -8,12 +8,19 @@ class TestCandeBase:
     def BasicCande(self):
         class BasicCande(CandeBase):
             @property
-            def level_contents(self):
+            def problem_contents(self):
                 return []
         return BasicCande
 
-    def test_attrs(self, BasicCande):
-        assert BasicCande(0, Mode.ANALYSIS, level=3)
+    @pytest.fixture
+    def asd_anal_l3_cande(self, BasicCande):
+        return BasicCande(0, Mode.ANALYSIS, level=3)
+
+    def test_init(self, asd_anal_l3_cande):
+        assert asd_anal_l3_cande
+
+    def test_iter(self, asd_anal_l3_cande):
+        assert list(iter(asd_anal_l3_cande)) == [asd_anal_l3_cande]
 
 
 class TestNode:
