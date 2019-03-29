@@ -1,5 +1,5 @@
 from __future__ import annotations
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Optional
 
 from candemachine.utilities import mod_str_to_bytearray
@@ -9,6 +9,7 @@ from ..utilities import Decimal, mutate_barray_for_preamble
 
 @dataclass
 class CandePart:
+    last: bool = field(default=False, init=False, repr=False)
     num: int = 0
 
     @staticmethod
@@ -22,15 +23,15 @@ class CandePart:
     def from_cid(cls, line):
         cls.remove_preamble(line)
         num = int(line[1:5])
+        obj = cls(num)
+        obj.last = line[0]=="L"
         del line[:5]
-        return cls(num)
+        return obj
 
     def __format__(self, format_spec):
-        if format_spec == 'cid':
-            return f'{self.num: >5d}'
-        if format_spec == 'cidL':
-            return f'L{self.num: >4d}'
-        raise CandeFormatError(f'Invalid format_spec: {format_spec!r}')
+        if format_spec != 'cid':
+            raise CandeFormatError(f'Invalid format_spec: {format_spec!r}')
+        return f'{"L" if self.last else " "}{self.num: >4d}'
 
 
 @dataclass

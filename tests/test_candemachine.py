@@ -35,7 +35,8 @@ class TestNode:
     def test_cid_format(self, node, info):
         result = f'   {info["num"]}     {info["x"]: >10G}{info["y"]: >10G}'
         assert format(node, 'cid') == ' ' + result
-        assert format(node, 'cidL') == 'L' + result
+        node.last = True
+        assert format(node, 'cid') == 'L' + result
 
     def test_from_cid(self, cidL):
         assert candemachine.Node.from_cid(cidL)
@@ -63,7 +64,8 @@ class TestElement:
         result += '' if element.type==0 else f'{element.type: >5d}'
         result += '' if element.death==0 else f'               {element.death: >5d}'
         assert format(element, 'cid') == ' ' + result
-        assert format(element, 'cidL') == 'L' + result
+        element.last = True
+        assert format(element, 'cid') == 'L' + result
 
     def test_from_cid(self, cidL):
         assert candemachine.Element.from_cid(cidL)
@@ -90,7 +92,8 @@ class TestBoundary:
         result = f'  {info["node"]}{info["xcode"]: >5d}{info["xvalue"]: >10G}{info["ycode"]: >5d}{info["yvalue"]: >10G}' \
             f'{info["angle"]: >10G}{info["step"]: >5d}'
         assert format(boundary, 'cid') == ' ' + result
-        assert format(boundary, 'cidL') == 'L' + result
+        boundary.last = True
+        assert format(boundary, 'cid') == 'L' + result
 
     def test_from_cid(self, cidL):
         assert candemachine.Boundary.from_cid(cidL)
