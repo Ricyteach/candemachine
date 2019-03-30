@@ -34,14 +34,14 @@ class TestCandeBase:
     def test_from_cid(self, BasicCande, cid):
         assert BasicCande.from_cid(cid)
 
-    def test_serialize(self, asd_anal_l3_cande):
+    def test_serialize(self, asd_anal_l3_cande, cid):
         with pytest.raises(CandeSerializationError):
             next(asd_anal_l3_cande.serialize(output="foo"))
         next(asd_anal_l3_cande.serialize(output="cid"))
         next(asd_anal_l3_cande.serialize(output="cid"))  # already tested in cid_format
         next(asd_anal_l3_cande.serialize(output="cid"))  # already tested in cid_format
         next(asd_anal_l3_cande.serialize(output="cid"))  # already tested in cid_format
-        assert next(asd_anal_l3_cande.serialize(output="cid")) == ""
+        assert next(asd_anal_l3_cande.serialize(output="cid")) == cid
 
 class TestNode:
     @pytest.fixture
