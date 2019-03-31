@@ -37,11 +37,9 @@ class TestCandeBase:
     def test_serialize(self, asd_anal_l3_cande):
         with pytest.raises(CandeSerializationError):
             next(asd_anal_l3_cande.serialize(output="foo"))
-        next(asd_anal_l3_cande.serialize(output="cid"))
-        next(asd_anal_l3_cande.serialize(output="cid"))  # already tested in cid_format
-        next(asd_anal_l3_cande.serialize(output="cid"))  # already tested in cid_format
-        next(asd_anal_l3_cande.serialize(output="cid"))  # already tested in cid_format
-        assert next(asd_anal_l3_cande.serialize(output="cid")) == ""
+        i_serialize = asd_anal_l3_cande.serialize(output="cid")
+        next(i_serialize)  # already tested in cid_format
+        assert next(i_serialize) == ""
 
 class TestNode:
     @pytest.fixture
