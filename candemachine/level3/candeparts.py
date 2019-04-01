@@ -2,13 +2,13 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Optional
 
-from candemachine.utilities import mod_str_to_bytearray
+from ..formats import CandeFormattableMixin
 from ..exceptions import CandeFormatError
-from ..utilities import Decimal, mutate_barray_for_preamble
+from ..utilities import Decimal, mutate_barray_for_preamble, mod_str_to_bytearray
 
 
 @dataclass
-class CandePart:
+class CandePart(CandeFormattableMixin):
     last: bool = field(default=False, init=False, repr=False)
     num: int = 0
 

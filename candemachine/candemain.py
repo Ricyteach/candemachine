@@ -2,11 +2,12 @@ import abc
 import enum
 import logging
 from dataclasses import dataclass, field
-from itertools import chain
 from pathlib import Path
 from typing import List
 
-from .exceptions import CandeSerializationError, CandeDeserializationError, CandeReadError
+from candemachine.serialize import deserialize, serialize
+from .formats import CandeFormattableMixin
+from .exceptions import CandeReadError
 from .pipe_groups import PipeGroup
 from .materials import Material
 from .utilities import mutate_barray_for_preamble, mod_str_to_bytearray, ValuesGenMixin
@@ -35,7 +36,7 @@ class Level(ValuesGenMixin, enum.IntEnum):
 
 
 @dataclass(eq=False)
-class CandeBase(abc.ABC):
+class CandeBase(CandeFormattableMixin, abc.ABC):
     """Base class for CandeL1, CandeL2, and CandeL3 problems"""
     method:Method
     mode: Mode
@@ -55,7 +56,7 @@ class CandeBase(abc.ABC):
             logging.debug(f"Truncated heading {len(self.heading)-60} characters")
             self.heading = self.heading[:60]
 
-    def __format__(self, format_spec):
+    def cid_format(self):
         result_strs = []
         result_strs.append(f'{self.mode.value: <8}{self.level.value: >2d}{self.method.value: >2d}{self.n_pipe_groups: >3d}{self.heading: <60}{self.iterations: >5d}')
         return ''.join(result_strs)
@@ -86,41 +87,22 @@ class CandeBase(abc.ABC):
 
     @n_pipe_groups.setter
     def n_pipe_groups(self, n):
+        # TODO: figure this, uh, out.
         self._n_pipe_groups = n
 
     def write(self, p: Path, output="cid", mode="x"):
         with p.open(mode=mode) as fout:
-            fout.write("\n".join(self.serialize(output)))
+            fout.write("\n".join(serialize(output)))
 
     @classmethod
     def read(cls, p: Path):
         if p.suffix != "cid":
             raise CandeReadError(f"File type {p.suffix!r} not supported.")
         with p.open(mode="r") as fin:
-            return cls.deserialize(fin, p.suffix)
+            return deserialize(fin, p.suffix)
 
     def __iter__(self):
-        yield self
-        yield from chain.from_iterable(self.ichildren())
-
-    def ichildren(self):
         yield from (self.pipe_groups, *self.problem_contents, self.materials)
-
-    @classmethod
-    def deserialize(cls, lines, input="cid"):
-        if input != "cid":
-            raise CandeDeserializationError(f"Input type {input!r} not supported.")
-        ilines = iter(lines)
-        obj = cls.from_cid(next(ilines))
-        for child in obj.ichildren():
-            child.deserialize(ilines)
-        return obj
-
-    def serialize(self, output="cid"):
-        if output != "cid":
-            raise CandeSerializationError(f"Output type {output!r} not supported.")
-        yield f"{self:cid}"
-        yield from chain.from_iterable(child.serialize(output) for child in self.ichildren())
 
     @property
     @abc.abstractmethod
