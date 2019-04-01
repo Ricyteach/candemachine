@@ -5,7 +5,8 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import List
 
-from candemachine.serialize import deserialize, serialize
+from candemachine.serialize import serialize
+from candemachine.deserialize import deserialize
 from .formats import CandeFormattableMixin
 from .exceptions import CandeReadError
 from .pipe_groups import PipeGroup
