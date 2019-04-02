@@ -1,10 +1,11 @@
 import pytest
-from candemachine.candemain import CandeBase, Mode
+from candemachine.candeproblem import CandeProbBase
+from candemachine.candemain import Mode
 
 
 @pytest.fixture
 def BasicCande():
-    class BasicCande(CandeBase):
+    class BasicCande(CandeProbBase):
         @property
         def problem_contents(self):
             return []

@@ -1,49 +1,49 @@
-from .candemain import CandeBase
+from .candeproblem import CandeProbBase
 
 
-class CandeL1AnalysisASD(CandeBase):
+class CandeL1AnalysisASD(CandeProbBase):
     pass
 
 
-class CandeL2AnalysisASD(CandeBase):
+class CandeL2AnalysisASD(CandeProbBase):
     pass
 
 
-class CandeL3AnalysisASD(CandeBase):
+class CandeL3AnalysisASD(CandeProbBase):
     pass
 
 
-class CandeL1DesignASD(CandeBase):
+class CandeL1DesignASD(CandeProbBase):
     pass
 
 
-class CandeL2DesignASD(CandeBase):
+class CandeL2DesignASD(CandeProbBase):
     pass
 
 
-class CandeL3DesignASD(CandeBase):
+class CandeL3DesignASD(CandeProbBase):
     pass
 
 
-class CandeL1AnalysisLRFD(CandeBase):
+class CandeL1AnalysisLRFD(CandeProbBase):
     pass
 
 
-class CandeL2AnalysisLRFD(CandeBase):
+class CandeL2AnalysisLRFD(CandeProbBase):
     pass
 
 
-class CandeL3AnalysisLRFD(CandeBase):
+class CandeL3AnalysisLRFD(CandeProbBase):
     pass
 
 
-class CandeL1DesignLRFD(CandeBase):
+class CandeL1DesignLRFD(CandeProbBase):
     pass
 
 
-class CandeL2DesignLRFD(CandeBase):
+class CandeL2DesignLRFD(CandeProbBase):
     pass
 
 
-class CandeL3DesignLRFD(CandeBase):
+class CandeL3DesignLRFD(CandeProbBase):
     pass
