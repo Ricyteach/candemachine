@@ -10,7 +10,7 @@ class CandeFormattableMixin:
     def __init_subclass__(cls, **kwargs):
         if not all(hasattr(cls, attr) for d in (cls._spec_dict, cls._from_dict) for attr in d.values()):
             raise CandeFormatError(f'{cls.__qualname__!r} class missing method(s): '
-                                   f'{"".join(attr for d in (cls._spec_dict, cls._from_dict) for attr in d)}')
+                                   f'{", ".join(attr for d in (cls._spec_dict, cls._from_dict) for attr in d.values())}')
 
     def __format__(self, format_spec):
         try:
