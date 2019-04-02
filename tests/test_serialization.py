@@ -2,7 +2,7 @@ import pytest
 
 from candemachine.exceptions import CandeSerializationError
 from candemachine.serialize import serialize
-from candemachine.deserialize import deserialize
+from candemachine.read.deserialize import deserialize
 
 
 class TestDeserialize:
