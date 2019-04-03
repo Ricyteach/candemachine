@@ -5,16 +5,17 @@ from pathlib import Path
 from typing import List
 
 from .candemain import Mode, Method, Level, CandeMain
-from .serialize import serialize
+from candemachine.write.serialize import serialize
 from .read.deserialize import deserialize
-from .formats import CandeFormattableMixin
+from candemachine.write.formattable import CandeFormattableMixin
+from candemachine.read.readable import CandeReadableMixin
 from .exceptions import CandeReadError
 from .pipe_groups import PipeGroup
 from .materials import Material
 
 
 @dataclass(eq=False)
-class CandeProbBase(CandeFormattableMixin, abc.ABC):
+class CandeProbBase(CandeFormattableMixin, CandeReadableMixin, abc.ABC):
     """Base class for CandeL1, CandeL2, and CandeL3 problems"""
     method_: InitVar[Method]
     mode_: InitVar[Mode]

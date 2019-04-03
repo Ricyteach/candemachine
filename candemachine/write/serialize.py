@@ -1,5 +1,5 @@
 from typing import Iterable
-from .exceptions import CandeSerializationError
+from candemachine.exceptions import CandeSerializationError
 
 
 def serialize(obj, output="cid"):

@@ -2,7 +2,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Optional
 
-from ..formats import CandeFormattableMixin
+from candemachine.write.formattable import CandeFormattableMixin
 from ..exceptions import CandeFormatError
 from ..utilities import Decimal, mutate_barray_for_preamble, mod_str_to_bytearray
 
